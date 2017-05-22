@@ -82,7 +82,7 @@ def cmp_and_copy(file1, file2):
 
             # 更新修改时间日志文件
             shell_cmd = 'cp ' + file2 + ' ' + file1 + ' -f'
-            # os.system(shell_cmd)
+            os.system(shell_cmd)
 
             # 输出提示信息，自带颜色
             print('\033[1;33m' + line[1] + " " + line[2] + '\033[0m   \033[1;36m' +
