@@ -6,15 +6,15 @@ import sys
 import datetime
 import subprocess
 
-# 文件跟踪路径，多个路径使用“，”隔开
-#ck_path = ['board/samsung/s5pv210_smc/', 'arch/arm/']
-ck_path = ['test']
+# 文件跟踪路径，多个路径（相对路径）使用“，”隔开
+ck_path = ['board/samsung/s5pv210_smc/', 'arch/arm/']
+#ck_path = ['test']
 # 源码修改目录文件路径(一般是共享文件夹路径)
-#src_code_path_cp_from = '/mnt/hgfs/winshare/uboot/u-boot-2017.01/'
-src_code_path_cp_from = "/mnt/hgfs/winshare/shell/from"
+src_code_path_cp_from = '/mnt/hgfs/winshare/uboot/u-boot-2017.01/'
+#src_code_path_cp_from = "/mnt/hgfs/winshare/shell/from"
 # 编译源码目录文件路径
-#src_code_path_cp_to = '/home/smc/workspace/uboot/uboot-2017.01/'
-src_code_path_cp_to = "/mnt/hgfs/winshare/shell/to"
+src_code_path_cp_to = '/home/smc/workspace/uboot/uboot-2017.01/'
+#src_code_path_cp_to = "/mnt/hgfs/winshare/shell/to"
 
 
 def find_file_by_single_path(path):
@@ -73,6 +73,9 @@ def cmp_and_copy(file1, file2):
         for line in out_single:
             line = line.split()
             cp_file_name = line[0].split(src_code_path_cp_from)[1]
+            # os.path.join使用的时候必须保证第二个参数的开始不能是'/'，否则认为根目录
+            if cp_file_name[0] == '/':
+                cp_file_name = cp_file_name[1:-1]
 
             # 复制更新或者新建的文件
             shell_cmd = 'cp ' + \
@@ -87,14 +90,6 @@ def cmp_and_copy(file1, file2):
             # 输出提示信息，自带颜色
             print('\033[1;33m' + line[1] + " " + line[2] + '\033[0m   \033[1;36m' +
                   cp_file_name + '\033[0m\033[1;31m  update!\033[0m')
-
-
-# src_code_path_cp_from和src_code_path_cp_to的路径必须以‘/’结尾，否则os.path.join容易出错
-if src_code_path_cp_from[-1] != '/':
-    src_code_path_cp_from += '/'
-
-if src_code_path_cp_to[-1] != '/':
-    src_code_path_cp_to += '/'
 
 # 获得.ck_log路径
 log_dir = os.path.join(src_code_path_cp_to, '.ck_log')
