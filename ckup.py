@@ -7,12 +7,14 @@ import datetime
 import subprocess
 
 # 文件跟踪路径，多个路径使用“，”隔开
-ck_path = ['board/samsung/s5pv210_smc/', 'arch/arm/']
-
+#ck_path = ['board/samsung/s5pv210_smc/', 'arch/arm/']
+ck_path = ['test']
 # 源码修改目录文件路径(一般是共享文件夹路径)
-src_code_path_cp_from = '/mnt/hgfs/winshare/uboot/u-boot-2017.01/'
+#src_code_path_cp_from = '/mnt/hgfs/winshare/uboot/u-boot-2017.01/'
+src_code_path_cp_from = "/mnt/hgfs/winshare/shell/from"
 # 编译源码目录文件路径
-src_code_path_cp_to = '/home/smc/workspace/uboot/uboot-2017.01/'
+#src_code_path_cp_to = '/home/smc/workspace/uboot/uboot-2017.01/'
+src_code_path_cp_to = "/mnt/hgfs/winshare/shell/to"
 
 
 def find_file_by_single_path(path):
@@ -73,26 +75,26 @@ def cmp_and_copy(file1, file2):
             cp_file_name = line[0].split(src_code_path_cp_from)[1]
 
             # 复制更新或者新建的文件
-            shell_cmd = 'cp ' + line[0] + ' ' + os.path.join(
-                src_code_path_cp_to, cp_file_name) + ' -f'
+            shell_cmd = 'cp ' + \
+                line[0] + ' ' + \
+                os.path.join(src_code_path_cp_to, cp_file_name) + ' -f'
             os.system(shell_cmd)
 
             # 更新修改时间日志文件
             shell_cmd = 'cp ' + file2 + ' ' + file1 + ' -f'
-            os.system(shell_cmd)
+            # os.system(shell_cmd)
 
             # 输出提示信息，自带颜色
-            print('\033[1;33m', end="")
-            print(line[1] + " " + line[2], end='')
-            print('\033[0m', end='')
-            print('   ', end='')
-            print('\033[1;36m', end='')
-            print(cp_file_name, end='')
-            print('\033[0m', end='')
-            print('\033[1;31m', end='')
-            print('  update!', end='')
-            print('\033[0m')
+            print('\033[1;33m' + line[1] + " " + line[2] + '\033[0m   \033[1;36m' +
+                  cp_file_name + '\033[0m\033[1;31m  update!\033[0m')
 
+
+# src_code_path_cp_from和src_code_path_cp_to的路径必须以‘/’结尾，否则os.path.join容易出错
+if src_code_path_cp_from[-1] != '/':
+    src_code_path_cp_from += '/'
+
+if src_code_path_cp_to[-1] != '/':
+    src_code_path_cp_to += '/'
 
 # 获得.ck_log路径
 log_dir = os.path.join(src_code_path_cp_to, '.ck_log')
