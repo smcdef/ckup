@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # 作者：宋牧春(smcdef@163.com)
-#
+# github clone地址：git@github.com:smcdef/ckup.git
 import os
 import sys
 import datetime
@@ -26,7 +26,7 @@ def find_file_by_single_path(path):
             m_time = datetime.datetime.fromtimestamp(
                 os.path.getmtime(path_single))
             file_name_time = path_single + ' ' + \
-                m_time.strftime('%Y-%m-%d %H:%M:%S')
+                m_time.strftime('%Y-%m-%d %H:%M:%S') + '\n'
             list_all.append(file_name_time)
         elif os.path.isdir(path_single):
             list_all += (find_file_by_single_path(path_single))
@@ -42,7 +42,7 @@ def find_file_by_paths(path):
 
 def get_full_path(path_prefix, path):
     path_tmp = []
-    for i in range(0, len(path)):
+    for i in range(len(path)):
         path_tmp.append(os.path.join(path_prefix, path[i]))
 
     return path_tmp
@@ -55,7 +55,7 @@ def creat_log_file(log_path, src_code_path=src_code_path_cp_from, log_file_name=
     file_list = find_file_by_paths(
         get_full_path(src_code_path, ck_path))
     fp = open(log_file_dir, 'w+')
-    fp.writelines([line + '\n' for line in file_list])
+    fp.writelines(file_list)
     fp.close()
 
     return log_file_dir
@@ -75,7 +75,7 @@ def cmp_and_copy(file1, file2):
             cp_file_name = line[0].split(src_code_path_cp_from)[1]
             # os.path.join使用的时候必须保证第二个参数的开始不能是'/'，否则认为根目录
             if cp_file_name[0] == '/':
-                cp_file_name = cp_file_name[1:-1]
+                cp_file_name = cp_file_name[1:]
 
             # 复制更新或者新建的文件
             shell_cmd = 'cp ' + \
@@ -98,6 +98,7 @@ if len(sys.argv) > 1:
     if sys.argv[1] == 'clean':
         shell_cmd = 'rm -rf ' + log_dir
         os.system(shell_cmd)
+        print('\033[1;31m' + log_dir + ' directory is remove!\033[0m')
         sys.exit(0)
 
 if os.path.exists(log_dir):
