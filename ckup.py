@@ -7,29 +7,35 @@ import datetime
 import subprocess
 
 # 文件跟踪路径，多个路径（相对路径）使用“，”隔开
-ck_path = ['board/samsung/s5pv210_smc/', 'arch/arm/']
-#ck_path = ['test']
+ck_path = ['board/samsung/s5pv210_smc/',
+           'arch/arm/', 'include/configs/s5pv210_smc.h']
+# ck_path = ['test', 'smc.txt']
 # 源码修改目录文件路径(一般是共享文件夹路径)
 src_code_path_cp_from = '/mnt/hgfs/winshare/uboot/u-boot-2017.01/'
-#src_code_path_cp_from = "/mnt/hgfs/winshare/shell/from"
+# src_code_path_cp_from = "/mnt/hgfs/winshare/shell/from"
 # 编译源码目录文件路径
 src_code_path_cp_to = '/home/smc/workspace/uboot/uboot-2017.01/'
-#src_code_path_cp_to = "/mnt/hgfs/winshare/shell/to"
+# src_code_path_cp_to = "/mnt/hgfs/winshare/shell/to"
 
 
 def find_file_by_single_path(path):
     list_all = []
-    filelist = os.listdir(path)
-    for f in filelist:
-        path_single = os.path.join(path, f)
-        if os.path.isfile(path_single):
-            m_time = datetime.datetime.fromtimestamp(
-                os.path.getmtime(path_single))
-            file_name_time = path_single + ' ' + \
-                m_time.strftime('%Y-%m-%d %H:%M:%S') + '\n'
-            list_all.append(file_name_time)
-        elif os.path.isdir(path_single):
-            list_all += (find_file_by_single_path(path_single))
+    if os.path.isfile(path):
+        m_time = datetime.datetime.fromtimestamp(os.path.getmtime(path))
+        list_all.append(path + ' ' +
+                        m_time.strftime('%Y-%m-%d %H:%M:%S') + '\n')
+    else:
+        filelist = os.listdir(path)
+        for f in filelist:
+            path_single = os.path.join(path, f)
+            if os.path.isfile(path_single):
+                m_time = datetime.datetime.fromtimestamp(
+                    os.path.getmtime(path_single))
+                file_name_time = path_single + ' ' + \
+                    m_time.strftime('%Y-%m-%d %H:%M:%S') + '\n'
+                list_all.append(file_name_time)
+            elif os.path.isdir(path_single):
+                list_all += (find_file_by_single_path(path_single))
     return list_all
 
 
